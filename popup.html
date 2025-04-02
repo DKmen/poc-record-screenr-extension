@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta tags for proper character encoding and viewport -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Page title -->
+    <title>Screen & Voice Recorder</title>
+    
+    <!-- External stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Main container for the recorder interface -->
+    <div class="container">
+        <!-- Header section -->
+        <h2>Screen & Voice Recorder</h2>
+        <p class="permission-notice">
+            This extension requires permission to:
+            • Access your microphone
+            • Share your screen
+        </p>
+        
+        <!-- Control buttons container -->
+        <div class="controls">
+            <button id="startRecording" type="button" aria-label="Start Recording">
+                Start Recording
+            </button>
+            <button id="stopRecording" type="button" aria-label="Stop Recording" disabled>
+                Stop Recording
+            </button>
+        </div>
+        
+        <!-- Status message container -->
+        <div id="status" role="status" aria-live="polite"></div>
+    </div>
+
+    <!-- JavaScript file for functionality -->
+    <script src="popup.js"></script>
+</body>
+</html>

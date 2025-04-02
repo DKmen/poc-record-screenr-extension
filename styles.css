@@ -1,0 +1,74 @@
+/* Main container styles */
+.container {
+  width: 300px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Control buttons container */
+.controls {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Default button styles */
+button {
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+/* Disabled button state */
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Hover state for active buttons */
+button:not(:disabled):hover {
+  background-color: #45a049;
+}
+
+/* Status message container */
+#status {
+  margin-top: 10px;
+  color: #666;
+  font-size: 14px;
+  text-align: center;
+}
+
+.permission-notice {
+  font-size: 12px;
+  color: #666;
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  line-height: 1.4;
+}
+
+/* Media query for smaller screens */
+@media screen and (max-width: 320px) {
+  .container {
+    width: 100%;
+    padding: 15px;
+  }
+
+  .controls {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  button {
+    width: 100%;
+  }
+}
