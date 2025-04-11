@@ -1,75 +1,50 @@
-// Global variables
-let mediaRecorder;
-let recordedChunks = [];
+const recordTab = document.querySelector("#tab");
+const recordScreen = document.querySelector("#screen");
 
-document.getElementById('startRecording').addEventListener('click', async () => {
-  try {
-    // Capture screen (video + system audio if available)
-    const screenStream = await navigator.mediaDevices.getDisplayMedia({
-      video: true,
-      audio: true  // This captures system audio if the user allows it
-    });
+// check chrome storage if recording is on
+const checkRecording = async () => {
+  const recording = await chrome.storage.local.get(["recording", "type"]);
+  const recordingStatus = recording.recording || false;
+  const recordingType = recording.type || "";
+  return [recordingStatus, recordingType];
+};
 
-    // Capture microphone audio separately
-    // const micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+const init = async () => {
+  const recordingState = await checkRecording();
 
-    // Extract audio tracks from both streams
-    const combinedAudioTracks = [
-      ...screenStream.getAudioTracks(),
-      // ...micStream.getAudioTracks()
-    ];
-
-    // Merge screen video and combined audio into a single MediaStream
-    const combinedStream = new MediaStream([
-      ...screenStream.getVideoTracks(), // Screen video track
-      ...combinedAudioTracks            // Both system & mic audio
-    ]);
-
-    // Initialize MediaRecorder
-    mediaRecorder = new MediaRecorder(combinedStream, { mimeType: 'video/webm' });
-
-    // Collect recorded chunks
-    mediaRecorder.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        recordedChunks.push(event.data);
-      }
-    };
-
-    // Handle stop event
-    mediaRecorder.onstop = () => {
-      // Create video blob
-      const blob = new Blob(recordedChunks, { type: 'video/webm' });
-
-      // Generate download link
-      const url = URL.createObjectURL(blob);
-      const downloadLink = document.createElement('a');
-      downloadLink.href = url;
-      downloadLink.download = 'screen-recording.webm';
-      downloadLink.click();
-
-      // Cleanup
-      URL.revokeObjectURL(url);
-      recordedChunks = [];
-    };
-
-    // Start recording
-    mediaRecorder.start();
-    updateUIState(true);
-  } catch (err) {
-    console.error('Error:', err);
-    document.getElementById('status').textContent = 'Error: ' + err.message;
+  if (recordingState[0] === true) {
+    if (recordingState[1] === "tab") {
+      recordTab.innerText = "Stop Recording";
+    } else {
+      recordScreen.innerText = "Stop Recording";
+    }
   }
-});
 
-// Stop recording
-document.getElementById('stopRecording').addEventListener('click', () => {
-  mediaRecorder.stop();
-  updateUIState(false);
-});
+  const updateRecording = async (type) => {
+    const recordingState = await checkRecording();
 
-// UI updates
-function updateUIState(isRecording) {
-  document.getElementById('startRecording').disabled = isRecording;
-  document.getElementById('stopRecording').disabled = !isRecording;
-  document.getElementById('status').textContent = isRecording ? 'Recording...' : 'Recording saved!';
-}
+    if (recordingState[0] === true) {
+      // stop recording
+      chrome.runtime.sendMessage({ type: "stop-recording", recordingType: type });
+    } else {
+      // send message to service worker (background.js) to start recording
+      chrome.runtime.sendMessage({
+        type: "start-recording",
+        recordingType: type,
+      });
+    }
+
+    // close popup
+    window.close();
+  };
+
+  recordTab.addEventListener("click", async () => {
+    updateRecording("tab");
+  });
+
+  recordScreen.addEventListener("click", async () => {
+    updateRecording("screen");
+  });
+};
+
+init();

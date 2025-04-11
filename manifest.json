@@ -4,6 +4,9 @@
   "version": "1.0",
   "description": "Record your screen and microphone audio",
   "permissions": [
+    "tabCapture",
+    "offscreen",
+    "scripting",
     "desktopCapture",
     "tabs",
     "storage"
@@ -11,10 +14,12 @@
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "icons/icon16.png",
-      "48": "icons/icon48.png",
-      "128": "icons/icon128.png"
+      "16": "icons/recording.png",
+      "32": "icons/not-recording.png"
     }
+  },
+  "background": {
+    "service_worker": "background.js"
   },
   "icons": {
     "16": "icons/icon16.png",
